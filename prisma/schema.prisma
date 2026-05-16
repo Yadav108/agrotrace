@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  phone     String?
+  location  String?
+  createdAt DateTime @default(now())
+
+  batches   Batch[]
+  orders    Order[]
+  events    ShipmentEvent[]
+}
+
+enum Role {
+  FARMER
+  BUYER
+  TRANSPORTER
+}
+
+model Batch {
+  id          String      @id @default(cuid())
+  batchCode   String      @unique
+  cropType    String
+  variety     String?
+  quantityKg  Float
+  pricePerKg  Float
+  farmLocation String
+  harvestDate DateTime
+  status      BatchStatus @default(AVAILABLE)
+  farmerId    String
+  createdAt   DateTime    @default(now())
+
+  farmer      User            @relation(fields: [farmerId], references: [id])
+  events      ShipmentEvent[]
+  orders      Order[]
+}
+
+enum BatchStatus {
+  AVAILABLE
+  PARTIALLY_SOLD
+  SOLD_OUT
+  IN_TRANSIT
+  DELIVERED
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  batchId         String
+  buyerId         String
+  quantityOrdered Float
+  pricePerKg      Float
+  totalAmount     Float
+  status          OrderStatus @default(PENDING)
+  createdAt       DateTime    @default(now())
+
+  batch           Batch @relation(fields: [batchId], references: [id])
+  buyer           User  @relation(fields: [buyerId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+model ShipmentEvent {
+  id          String    @id @default(cuid())
+  batchId     String
+  actorId     String
+  eventType   EventType
+  locationName String
+  lat         Float?
+  lon         Float?
+  timestamp   DateTime  @default(now())
+  temperature Float?
+  humidity    Float?
+  vehicleId   String?
+  notes       String?
+
+  batch       Batch @relation(fields: [batchId], references: [id])
+  actor       User  @relation(fields: [actorId], references: [id])
+}
+
+enum EventType {
+  BATCH_CREATED
+  PICKUP
+  CHECKPOINT_PASSED
+  WAREHOUSE_ENTRY
+  WAREHOUSE_EXIT
+  DELIVERED
+  QUALITY_CHECK
+}
