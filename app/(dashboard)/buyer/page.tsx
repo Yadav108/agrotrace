@@ -19,7 +19,6 @@ export default async function BuyerDashboard() {
     orderBy: { createdAt: "desc" },
   })
 
-  // Compute stats
   const activeOrders = myOrders.filter(o => o.status === "PENDING" || o.status === "CONFIRMED").length
   const totalSpent = myOrders
     .filter(o => o.status === "DELIVERED")
@@ -33,7 +32,6 @@ export default async function BuyerDashboard() {
     { label: "Unique Crops", value: uniqueCrops, icon: "🌾" },
   ]
 
-  // Available batches — compute remaining per batch
   const rawBatches = await prisma.batch.findMany({
     where: { status: { in: ["AVAILABLE", "PARTIALLY_SOLD"] } },
     include: { farmer: true, orders: true },
@@ -61,73 +59,70 @@ export default async function BuyerDashboard() {
     PENDING: "#d97706",
     CONFIRMED: "#2563eb",
     IN_TRANSIT: "#7c3aed",
-    DELIVERED: "#16a34a",
-    CANCELLED: "#6b7280",
+    DELIVERED: "#059669",
+    CANCELLED: "#52525b",
   }
 
   return (
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold" style={{ color: "#1a4d2e" }}>Buyer Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">Welcome back, {buyer.name}</p>
+        <h1 className="text-2xl font-bold text-white">Buyer Dashboard</h1>
+        <p className="text-sm text-zinc-500 mt-1">Welcome back, {buyer.name}</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white rounded-xl p-5 shadow-sm border border-green-100">
+          <div key={s.label} className="glass rounded-xl p-5">
             <div className="text-2xl mb-2">{s.icon}</div>
-            <div className="text-2xl font-bold" style={{ color: "#1a4d2e" }}>{s.value}</div>
-            <div className="text-sm text-gray-500 mt-1">{s.label}</div>
+            <div className="text-2xl font-bold text-white">{s.value}</div>
+            <div className="text-sm text-zinc-500 mt-1">{s.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Available Produce — client component handles modal */}
+      {/* Available Produce */}
       <BuyerProduceTable batches={availableBatches} />
 
       {/* My Orders */}
-      <div className="bg-white rounded-xl shadow-sm border border-green-100 overflow-hidden">
-        <div className="px-6 py-4 border-b border-green-100">
-          <h2 className="font-semibold" style={{ color: "#1a4d2e" }}>My Orders</h2>
+      <div className="glass rounded-xl overflow-hidden">
+        <div className="px-6 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <h2 className="font-semibold text-white">My Orders</h2>
         </div>
         {myOrders.length === 0 ? (
-          <div className="p-12 text-center text-gray-400">
+          <div className="p-12 text-center text-zinc-600">
             <div className="text-4xl mb-3">🛒</div>
             <p>No orders placed yet. Browse available produce above.</p>
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead style={{ backgroundColor: "#f5f0e8" }}>
+            <thead style={{ background: "rgba(255,255,255,0.03)" }}>
               <tr>
                 {["Order ID", "Batch Code", "Crop", "Qty (kg)", "Total (₹)", "Status", "Action"].map(h => (
-                  <th key={h} className="px-4 py-3 text-left font-medium text-gray-600">{h}</th>
+                  <th key={h} className="px-4 py-3 text-left font-medium text-zinc-500">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {myOrders.map((o, i) => (
-                <tr key={o.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  <td className="px-4 py-3 font-mono text-xs text-gray-500">{o.id.slice(0, 8)}…</td>
-                  <td className="px-4 py-3 font-mono text-xs font-semibold" style={{ color: "#1a4d2e" }}>{o.batch.batchCode}</td>
-                  <td className="px-4 py-3 font-medium">{o.batch.cropType}</td>
-                  <td className="px-4 py-3">{o.quantityOrdered} kg</td>
-                  <td className="px-4 py-3 font-semibold">₹{o.totalAmount.toLocaleString("en-IN")}</td>
+                <tr key={o.id} style={{ background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.02)" }}>
+                  <td className="px-4 py-3 font-mono text-xs text-zinc-600">{o.id.slice(0, 8)}…</td>
+                  <td className="px-4 py-3 font-mono text-xs font-semibold text-brand-red">{o.batch.batchCode}</td>
+                  <td className="px-4 py-3 font-medium text-white">{o.batch.cropType}</td>
+                  <td className="px-4 py-3 text-zinc-300">{o.quantityOrdered} kg</td>
+                  <td className="px-4 py-3 font-semibold text-white">₹{o.totalAmount.toLocaleString("en-IN")}</td>
                   <td className="px-4 py-3">
                     <span
                       className="px-2 py-1 rounded-full text-xs text-white font-medium"
-                      style={{ backgroundColor: statusColors[o.status] || "#6b7280" }}
+                      style={{ backgroundColor: statusColors[o.status] || "#52525b" }}
                     >
                       {o.status}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <Link href={`/trace/${o.batch.batchCode}`}>
-                      <button
-                        className="px-3 py-1 rounded-lg text-xs font-medium text-white"
-                        style={{ backgroundColor: "#2563eb" }}
-                      >
+                      <button className="px-3 py-1 rounded-lg text-xs font-medium text-white bg-brand-red hover:bg-brand-red-hover transition-colors">
                         Track
                       </button>
                     </Link>

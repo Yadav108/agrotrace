@@ -37,11 +37,11 @@ export default async function FarmerDashboard() {
   ]
 
   const statusColors: Record<string, string> = {
-    AVAILABLE: "#16a34a",
+    AVAILABLE: "#059669",
     IN_TRANSIT: "#d97706",
-    SOLD_OUT: "#6b7280",
+    SOLD_OUT: "#52525b",
     PARTIALLY_SOLD: "#2563eb",
-    DELIVERED: "#1a4d2e",
+    DELIVERED: "#dc2626",
   }
 
   return (
@@ -49,8 +49,8 @@ export default async function FarmerDashboard() {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: "#1a4d2e" }}>Farmer Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">Welcome back, {farmer.name}</p>
+          <h1 className="text-2xl font-bold text-white">Farmer Dashboard</h1>
+          <p className="text-sm text-zinc-500 mt-1">Welcome back, {farmer.name}</p>
         </div>
         <AddBatchModal />
       </div>
@@ -58,51 +58,51 @@ export default async function FarmerDashboard() {
       {/* Stat Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white rounded-xl p-5 shadow-sm border border-green-100">
+          <div key={s.label} className="glass rounded-xl p-5">
             <div className="text-2xl mb-2">{s.icon}</div>
-            <div className="text-2xl font-bold" style={{ color: "#1a4d2e" }}>{s.value}</div>
-            <div className="text-sm text-gray-500 mt-1">{s.label}</div>
+            <div className="text-2xl font-bold text-white">{s.value}</div>
+            <div className="text-sm text-zinc-500 mt-1">{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* Batches Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-green-100 overflow-hidden">
-        <div className="px-6 py-4 border-b border-green-100">
-          <h2 className="font-semibold" style={{ color: "#1a4d2e" }}>My Produce Listings</h2>
+      <div className="glass rounded-xl overflow-hidden">
+        <div className="px-6 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <h2 className="font-semibold text-white">My Produce Listings</h2>
         </div>
         {batches.length === 0 ? (
-          <div className="p-12 text-center text-gray-400">
+          <div className="p-12 text-center text-zinc-600">
             <div className="text-4xl mb-3">🌱</div>
             <p>No batches yet. Add your first produce listing.</p>
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead style={{ backgroundColor: "#f5f0e8" }}>
+            <thead style={{ background: "rgba(255,255,255,0.03)" }}>
               <tr>
                 {["Batch Code", "Crop", "Variety", "Qty (kg)", "Price/kg", "Status", "Harvest Date", "Action"].map(h => (
-                  <th key={h} className="px-4 py-3 text-left font-medium text-gray-600">{h}</th>
+                  <th key={h} className="px-4 py-3 text-left font-medium text-zinc-500">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {batches.map((b, i) => (
-                <tr key={b.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  <td className="px-4 py-3 font-mono text-xs font-semibold" style={{ color: "#1a4d2e" }}>{b.batchCode}</td>
-                  <td className="px-4 py-3 font-medium">{b.cropType}</td>
-                  <td className="px-4 py-3 text-gray-500">{b.variety || "—"}</td>
-                  <td className="px-4 py-3">{b.quantityKg}</td>
-                  <td className="px-4 py-3">₹{b.pricePerKg}</td>
+                <tr key={b.id} style={{ background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.02)" }}>
+                  <td className="px-4 py-3 font-mono text-xs font-semibold text-brand-red">{b.batchCode}</td>
+                  <td className="px-4 py-3 font-medium text-white">{b.cropType}</td>
+                  <td className="px-4 py-3 text-zinc-500">{b.variety || "—"}</td>
+                  <td className="px-4 py-3 text-zinc-300">{b.quantityKg}</td>
+                  <td className="px-4 py-3 text-zinc-300">₹{b.pricePerKg}</td>
                   <td className="px-4 py-3">
                     <span className="px-2 py-1 rounded-full text-xs text-white font-medium"
-                      style={{ backgroundColor: statusColors[b.status] || "#6b7280" }}>
+                      style={{ backgroundColor: statusColors[b.status] || "#52525b" }}>
                       {b.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-500">{new Date(b.harvestDate).toLocaleDateString("en-IN")}</td>
+                  <td className="px-4 py-3 text-zinc-500">{new Date(b.harvestDate).toLocaleDateString("en-IN")}</td>
                   <td className="px-4 py-3">
                     <Link href={`/trace/${b.batchCode}`}>
-                      <button className="px-3 py-1 rounded-lg text-xs font-medium text-white" style={{ backgroundColor: "#1a4d2e" }}>
+                      <button className="px-3 py-1 rounded-lg text-xs font-medium text-white bg-brand-red hover:bg-brand-red-hover transition-colors">
                         View Trace
                       </button>
                     </Link>

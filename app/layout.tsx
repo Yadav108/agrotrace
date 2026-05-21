@@ -10,10 +10,12 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-[#f5f0e8] font-sans min-h-screen text-[#1a4d2e]">
-        <header className="py-6">
+      <body className="bg-brand-dark font-sans min-h-screen text-white">
+        <header className="py-5 border-b border-brand-border">
           <div className="max-w-6xl mx-auto px-4">
-            <Link href="/" className="text-2xl font-bold">🌿 AgroTrace</Link>
+            <Link href="/" className="text-2xl font-bold tracking-tight">
+              <span className="text-brand-red">Agro</span>Trace
+            </Link>
           </div>
         </header>
         <main className="max-w-6xl mx-auto px-4 py-8">

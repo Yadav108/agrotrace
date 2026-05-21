@@ -25,12 +25,7 @@ export default function LoginPage() {
     setLoading(true)
     setError("")
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      role,
-      redirect: false,
-    })
+    const result = await signIn("credentials", { email, password, role, redirect: false })
 
     if (result?.error) {
       setError("Invalid email or password")
@@ -49,57 +44,70 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#f5f0e8" }}>
-      <div className="w-full max-w-md px-4">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+      {/* Agricultural bokeh background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div style={{
+          position: "absolute", width: 600, height: 600, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(160,100,10,0.18), transparent 70%)",
+          bottom: "-15%", left: "-10%", filter: "blur(90px)",
+        }} />
+        <div style={{
+          position: "absolute", width: 500, height: 500, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(25,70,12,0.13), transparent 70%)",
+          top: "-10%", right: "-5%", filter: "blur(100px)",
+        }} />
+        <div style={{
+          position: "absolute", width: 400, height: 300, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(180,20,20,0.08), transparent 70%)",
+          top: "40%", right: "15%", filter: "blur(80px)",
+        }} />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md px-4">
 
         {/* Branding */}
         <div className="text-center mb-8">
-          <div className="text-4xl mb-2">🌿</div>
-          <h1 className="text-3xl font-bold" style={{ color: "#1a4d2e" }}>AgroTrace</h1>
-          <p className="text-sm mt-1" style={{ color: "#4a7c59" }}>Farm to Table, Every Step Traced</p>
+          <h1 className="text-4xl font-extrabold tracking-tight">
+            <span className="text-brand-red">Agro</span>
+            <span className="text-white">Trace</span>
+          </h1>
+          <p className="text-sm mt-2 text-zinc-500">Farm to Table, Every Step Traced</p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-green-100">
-          <h2 className="text-xl font-semibold mb-6" style={{ color: "#1a4d2e" }}>Sign in to your account</h2>
+        {/* Glassmorphic card */}
+        <div className="glass rounded-2xl p-8">
+          <h2 className="text-xl font-semibold mb-6 text-white">Sign in to your account</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* Email */}
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "#1a4d2e" }}>
-                Email address
-              </label>
+              <label className="block text-sm font-medium mb-1 text-zinc-400">Email address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 rounded-lg border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-800 text-gray-800"
+                className="input-dark"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "#1a4d2e" }}>
-                Password
-              </label>
+              <label className="block text-sm font-medium mb-1 text-zinc-400">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-lg border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-800"
+                className="input-dark"
               />
             </div>
 
-            {/* Role selector */}
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: "#1a4d2e" }}>
-                I am a...
-              </label>
+              <label className="block text-sm font-medium mb-2 text-zinc-400">I am a...</label>
               <div className="grid grid-cols-3 gap-2">
                 {roles.map((r) => (
                   <button
@@ -108,33 +116,29 @@ export default function LoginPage() {
                     onClick={() => setRole(r.value)}
                     className="p-3 rounded-xl border-2 text-center transition-all"
                     style={{
-                      borderColor: role === r.value ? "#1a4d2e" : "#d1fae5",
-                      backgroundColor: role === r.value ? "#f0fdf4" : "white",
+                      borderColor: role === r.value ? "#dc2626" : "rgba(255,255,255,0.08)",
+                      background: role === r.value ? "rgba(69,10,10,0.7)" : "rgba(255,255,255,0.04)",
+                      backdropFilter: "blur(8px)",
                     }}
                   >
                     <div className="text-2xl">{r.icon}</div>
-                    <div className="text-xs font-semibold mt-1" style={{ color: "#1a4d2e" }}>{r.label}</div>
+                    <div className="text-xs font-semibold mt-1 text-zinc-300">{r.label}</div>
                   </button>
                 ))}
               </div>
             </div>
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && <p className="text-red-400 text-sm">{error}</p>}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-lg text-white font-semibold transition-opacity disabled:opacity-60"
-              style={{ backgroundColor: "#1a4d2e" }}
-            >
+            <button type="submit" disabled={loading} className="btn-primary w-full py-3">
               {loading ? "Signing in..." : "Login"}
             </button>
           </form>
 
-          <div className="mt-6 pt-4 border-t border-green-100 text-center">
-            <p className="text-sm text-gray-500">
+          <div className="mt-6 pt-4 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+            <p className="text-sm text-zinc-500">
               Don&apos;t have an account?{" "}
-              <Link href="/register" className="font-medium" style={{ color: "#f4a935" }}>
+              <Link href="/register" className="font-medium text-brand-red hover:text-red-400 transition-colors">
                 Register
               </Link>
             </p>

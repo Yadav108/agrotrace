@@ -20,12 +20,11 @@ export default function TraceSearch({ initialValue }: { initialValue: string }) 
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Enter Batch Code (e.g. TMT-2026-0001)"
-        className="flex-1 px-5 py-4 text-base rounded-xl border-2 border-green-200 focus:outline-none focus:border-green-700 bg-white text-gray-800 font-mono placeholder:font-sans placeholder:text-gray-400"
+        className="flex-1 px-5 py-4 text-base rounded-xl border-2 border-brand-border bg-brand-surface text-white font-mono placeholder:font-sans placeholder:text-zinc-600 focus:outline-none focus:border-brand-red transition-colors"
       />
       <button
         type="submit"
-        className="px-8 py-4 rounded-xl text-white font-semibold text-base whitespace-nowrap"
-        style={{ backgroundColor: "#1a4d2e" }}
+        className="btn-primary px-8 py-4 rounded-xl text-base whitespace-nowrap"
       >
         Search
       </button>

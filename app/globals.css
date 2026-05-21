@@ -5,3 +5,76 @@
 html, body {
   height: 100%;
 }
+
+@layer base {
+  body {
+    background-color: #060606; /* fallback if image hasn't loaded */
+    color: #f5f5f5;
+    position: relative;
+  }
+
+  /* Farm photo — fixed, heavily blurred backdrop visible on all pages */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -40px;           /* extend past edges so blur doesn't show white fringe */
+    background-image: url('/farm.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(28px) brightness(0.16) saturate(0.55);
+    z-index: -2;
+  }
+
+  /* Grain film texture overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.028;
+    mix-blend-mode: overlay;
+  }
+
+  input, select, textarea {
+    color-scheme: dark;
+  }
+}
+
+@layer components {
+  /* Glassmorphism — Apple-style frosted panel */
+  .glass {
+    background: rgba(6, 6, 6, 0.52);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* Lighter glass for nested elements */
+  .glass-surface {
+    background: rgba(12, 12, 12, 0.58);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .input-dark {
+    @apply w-full px-4 py-2.5 rounded-lg border text-white placeholder-zinc-600
+           focus:outline-none focus:ring-2 focus:ring-brand-red transition-colors;
+    background: rgba(6, 6, 6, 0.65);
+    border-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+  }
+
+  .btn-primary {
+    @apply px-4 py-2.5 rounded-lg text-white font-semibold bg-brand-red
+           hover:bg-brand-red-hover transition-colors disabled:opacity-50;
+  }
+
+  .btn-outline {
+    @apply px-4 py-2.5 rounded-lg font-semibold border text-zinc-300 hover:bg-white/5 transition-colors;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}

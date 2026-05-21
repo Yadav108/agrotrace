@@ -7,7 +7,7 @@ const TraceMap = dynamic(() => import("@/components/trace/TraceMap"), {
   ssr: false,
   loading: () => (
     <div
-      className="rounded-lg border border-green-100 flex items-center justify-center text-gray-400 text-sm"
+      className="rounded-lg border border-brand-border bg-brand-elevated flex items-center justify-center text-zinc-600 text-sm"
       style={{ height: 420 }}
     >
       Loading map…
@@ -26,11 +26,11 @@ const EVENT_LABELS: Record<string, string> = {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  AVAILABLE: "#16a34a",
+  AVAILABLE: "#059669",
   PARTIALLY_SOLD: "#2563eb",
-  SOLD_OUT: "#6b7280",
+  SOLD_OUT: "#52525b",
   IN_TRANSIT: "#d97706",
-  DELIVERED: "#1a4d2e",
+  DELIVERED: "#dc2626",
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -84,7 +84,6 @@ export default async function TracePage({ searchParams }: Props) {
   const result = batchCode ? await fetchBatch(batchCode) : null
   const notFound = batchCode && !result
 
-  // Serialize events for client components (Dates → ISO strings)
   const mapEvents = result
     ? result.batch.events.map((e) => ({
         id: e.id,
@@ -100,10 +99,8 @@ export default async function TracePage({ searchParams }: Props) {
     <div>
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold" style={{ color: "#1a4d2e" }}>
-          Supply Chain Trace
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-3xl font-bold text-white">Supply Chain Trace</h1>
+        <p className="text-sm text-zinc-500 mt-1">
           Track your produce from farm to table — every step verified.
         </p>
       </div>
@@ -115,40 +112,36 @@ export default async function TracePage({ searchParams }: Props) {
 
       {/* Not found */}
       {notFound && (
-        <div className="bg-white rounded-xl border border-red-100 shadow-sm p-12 text-center">
+        <div className="glass rounded-xl p-12 text-center">
           <div className="text-4xl mb-3">🔍</div>
-          <p className="font-semibold text-gray-700">
+          <p className="font-semibold text-zinc-300">
             No batch found for code{" "}
-            <span className="font-mono" style={{ color: "#1a4d2e" }}>
-              {batchCode}
-            </span>
-            .
+            <span className="font-mono text-brand-red">{batchCode}</span>.
           </p>
-          <p className="text-sm text-gray-400 mt-1">Please check the batch code and try again.</p>
+          <p className="text-sm text-zinc-600 mt-1">Please check the batch code and try again.</p>
         </div>
       )}
 
       {/* Results */}
       {result && (
         <div className="space-y-6">
-          {/* Two-column row */}
           <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 1.15fr" }}>
 
             {/* LEFT — Batch Summary */}
-            <div className="bg-white rounded-xl shadow-sm border border-green-100 p-6">
+            <div className="glass rounded-xl p-6">
               <div className="flex items-start justify-between mb-5">
                 <div>
-                  <div className="font-mono text-xl font-bold" style={{ color: "#1a4d2e" }}>
+                  <div className="font-mono text-xl font-bold text-brand-red">
                     {result.batch.batchCode}
                   </div>
-                  <div className="text-sm text-gray-500 mt-0.5">
+                  <div className="text-sm text-zinc-500 mt-0.5">
                     {result.batch.cropType}
                     {result.batch.variety ? ` · ${result.batch.variety}` : ""}
                   </div>
                 </div>
                 <span
                   className="px-3 py-1 rounded-full text-xs text-white font-semibold"
-                  style={{ backgroundColor: STATUS_COLORS[result.batch.status] || "#6b7280" }}
+                  style={{ backgroundColor: STATUS_COLORS[result.batch.status] || "#52525b" }}
                 >
                   {STATUS_LABELS[result.batch.status] || result.batch.status}
                 </span>
@@ -159,22 +152,17 @@ export default async function TracePage({ searchParams }: Props) {
                 <SummaryRow label="Farm Location" value={result.batch.farmLocation} />
                 <SummaryRow label="Harvest Date" value={formatDate(result.batch.harvestDate)} />
                 <SummaryRow label="Original Quantity" value={`${result.batch.quantityKg} kg`} />
-                <SummaryRow
-                  label="Remaining Quantity"
-                  value={`${result.remainingKg.toFixed(1)} kg`}
-                />
+                <SummaryRow label="Remaining Quantity" value={`${result.remainingKg.toFixed(1)} kg`} />
                 <SummaryRow label="Price per kg" value={`₹${result.batch.pricePerKg}`} />
               </div>
             </div>
 
             {/* RIGHT — Journey Timeline */}
-            <div className="bg-white rounded-xl shadow-sm border border-green-100 p-6">
-              <h2 className="font-semibold mb-5" style={{ color: "#1a4d2e" }}>
-                Journey Timeline
-              </h2>
+            <div className="glass rounded-xl p-6">
+              <h2 className="font-semibold mb-5 text-white">Journey Timeline</h2>
 
               {result.batch.events.length === 0 ? (
-                <div className="py-12 text-center text-gray-400 text-sm">
+                <div className="py-12 text-center text-zinc-600 text-sm">
                   No events recorded for this batch yet.
                 </div>
               ) : (
@@ -183,44 +171,36 @@ export default async function TracePage({ searchParams }: Props) {
                     const isLatest = i === result.batch.events.length - 1
                     return (
                       <div key={e.id} className="flex gap-4 relative">
-                        {/* Vertical connector */}
                         {i < result.batch.events.length - 1 && (
                           <div
                             className="absolute top-5 bottom-0 w-px"
-                            style={{ left: 9, backgroundColor: "#d1fae5" }}
+                            style={{ left: 9, background: "rgba(255,255,255,0.08)" }}
                           />
                         )}
 
-                        {/* Dot */}
                         <div
                           className={`w-5 h-5 rounded-full flex-shrink-0 mt-0.5 z-10 border-2 ${
-                            isLatest
-                              ? "bg-green-600 border-green-600"
-                              : "bg-gray-300 border-gray-300"
+                            isLatest ? "bg-brand-red border-brand-red" : "border-zinc-600"
                           }`}
+                          style={isLatest ? {} : { background: "rgba(255,255,255,0.06)" }}
                         />
 
-                        {/* Content */}
                         <div className="pb-6 flex-1 min-w-0">
-                          <div className="font-semibold text-sm" style={{ color: "#1a4d2e" }}>
+                          <div className="font-semibold text-sm text-white">
                             {EVENT_LABELS[e.eventType] || e.eventType.replace(/_/g, " ")}
                           </div>
-                          <div className="text-sm text-gray-600">{e.locationName}</div>
-                          <div className="text-xs text-gray-400 mt-0.5">
+                          <div className="text-sm text-zinc-400">{e.locationName}</div>
+                          <div className="text-xs text-zinc-600 mt-0.5">
                             {formatTimestamp(e.timestamp)}
                           </div>
-                          <div className="text-xs text-gray-500 mt-0.5">
+                          <div className="text-xs text-zinc-600 mt-0.5">
                             {e.actor.name}
                             <span className="opacity-50 ml-1">· {e.actor.role}</span>
                           </div>
                           {(e.temperature != null || e.humidity != null) && (
-                            <div className="flex gap-3 mt-1 text-xs text-gray-500">
-                              {e.temperature != null && (
-                                <span>🌡️ {e.temperature}°C</span>
-                              )}
-                              {e.humidity != null && (
-                                <span>💧 {e.humidity}%</span>
-                              )}
+                            <div className="flex gap-3 mt-1 text-xs text-zinc-500">
+                              {e.temperature != null && <span>🌡️ {e.temperature}°C</span>}
+                              {e.humidity != null && <span>💧 {e.humidity}%</span>}
                             </div>
                           )}
                         </div>
@@ -233,13 +213,11 @@ export default async function TracePage({ searchParams }: Props) {
           </div>
 
           {/* Map */}
-          <div className="bg-white rounded-xl shadow-sm border border-green-100 overflow-hidden">
-            <div className="px-6 py-4 border-b border-green-100">
-              <h2 className="font-semibold" style={{ color: "#1a4d2e" }}>
-                Journey Map
-              </h2>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Events with GPS coordinates are shown on the map. Orange marker = latest stop.
+          <div className="glass rounded-xl overflow-hidden">
+            <div className="px-6 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+              <h2 className="font-semibold text-white">Journey Map</h2>
+              <p className="text-xs text-zinc-600 mt-0.5">
+                Events with GPS coordinates are shown on the map. Red marker = latest stop.
               </p>
             </div>
             <div className="p-4">
@@ -249,14 +227,14 @@ export default async function TracePage({ searchParams }: Props) {
         </div>
       )}
 
-      {/* Empty state — no search yet */}
+      {/* Empty state */}
       {!batchCode && (
-        <div className="py-20 text-center text-gray-400">
-          <div className="text-6xl mb-4">🌿</div>
-          <p className="text-lg font-medium text-gray-600">Enter a batch code above to trace its journey</p>
+        <div className="py-20 text-center text-zinc-600">
+          <div className="text-6xl mb-4">🔎</div>
+          <p className="text-lg font-medium text-zinc-400">Enter a batch code above to trace its journey</p>
           <p className="text-sm mt-1">
             Try{" "}
-            <Link href="/trace?batch=WHT-2026-0001" className="font-mono underline" style={{ color: "#1a4d2e" }}>
+            <Link href="/trace?batch=WHT-2026-0001" className="font-mono text-brand-red hover:text-red-400 underline transition-colors">
               WHT-2026-0001
             </Link>{" "}
             to see a live example.
@@ -270,8 +248,8 @@ export default async function TracePage({ searchParams }: Props) {
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-4">
-      <span className="text-gray-500 flex-shrink-0">{label}</span>
-      <span className="font-medium text-gray-800 text-right">{value}</span>
+      <span className="text-zinc-500 flex-shrink-0">{label}</span>
+      <span className="font-medium text-zinc-200 text-right">{value}</span>
     </div>
   )
 }
